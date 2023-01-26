@@ -54,7 +54,36 @@ public class StrudentController {
         //access : localhost:8080/get_student?name=Bibhuti
     }
 
-    // Diffrent ways of getting information from user
+    //Delete the information
+    @DeleteMapping("/delete_student/{id}")
+    public String deleteStudent(@PathVariable("id") int id){
+        if(!db.containsKey(id)){
+            return "invalid id";
+        }
+        db.remove(id);
+        return "Student removed successfully";
+    }
+
+
+    //Update Information
+    @PutMapping("/update_student")
+    public String updateStudent(@RequestParam("id") int id,@RequestParam("age") int age){
+        if(!db.containsKey(id)){
+            return "Invalid id";
+        }
+        db.get(id).setAge(age);
+        return "Age updated successfully";
+    }
+
+
+
+
+
+
+
+
+    // Different ways of getting information from user
+
 
     /*
 
