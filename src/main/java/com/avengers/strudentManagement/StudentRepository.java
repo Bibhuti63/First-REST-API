@@ -22,12 +22,15 @@ public class StudentRepository {
     }
 
     public Student getStudent( int admNo){
+        if(!db.containsKey(admNo)){
+            return null;
+        }
         return db.get(admNo);
     }
 
     public String deleteStudent( int id){
         if(!db.containsKey(id)){
-            return "Student not availabe on database";
+            return "Invalid id";
         }
         db.remove(id);
         return "Student removed successfully";
@@ -35,7 +38,7 @@ public class StudentRepository {
 
     public String updateStudent(int id, int age){
         if(!db.containsKey(id)){
-            return "Student not availabe of database";
+            return null;
         }
         db.get(id).setAge(age);
         return "Age updated successfully";

@@ -1,6 +1,8 @@
 package com.avengers.strudentManagement;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
     /*
@@ -16,32 +18,56 @@ public class StrudentController {
     @Autowired
     StudentService studentService;
 
-    //adding the information
+    /*
+    It's important that with every response we have to send the status code also, ex : (404- page not found error)
+    so we will use ResponseEnity as return type
+    ResposeEntity is a class consists of Response+Status Code
+    */
+
     @PostMapping("/add_student") //to define end point of post API
-    public String addStudent(@RequestBody Student student){
-        return studentService.addStudent(student);
-    }
-        //access : localhost:8080/add_student
+    //access : localhost:8080/add_student
 
-    //get the information
-    @GetMapping("/get_student")  //to define end point of GET API
-    public Student getStudent(@RequestParam("q") int admNo){ //what value we will get from  'q' value will passed to 'admNo'
-        return studentService.getStudent(admNo);
+    public ResponseEntity addStudent(@RequestBody Student student){
+        String response= studentService.addStudent(student);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-        //access : localhost:8080/get_student?q=1
 
-    //Delete the information
+
+    @GetMapping("/get_student") //to define end point of GET API
+    //access : localhost:8080/get_student?q=1
+
+    public ResponseEntity getStudent(@RequestParam("q") int admNo){
+        //what value we will get from  'q' value will passed to 'admNo'
+         Student student= studentService.getStudent(admNo);
+         if(student==null){
+             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+         }
+         return new ResponseEntity<>(student,HttpStatus.FOUND);
+    }
+
+
     @DeleteMapping("/delete_student/{id}")
-    public String deleteStudent(@PathVariable("id") int id){
-        return studentService.deleteStudent(id);
-    }
-        //access : localhost:8080/delete_student/1
+    //access : localhost:8080/delete_student/1
 
-    //Update Information
-    @PutMapping("/update_student")
-    public String updateStudent(@RequestParam("id") int id,@RequestParam("age") int age){
-        return studentService.updateStudent(id,age);
+    public ResponseEntity deleteStudent(@PathVariable("id") int id){
+        String response= studentService.deleteStudent(id);
+        if(response.equals("Invalid id")){
+            return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(response,HttpStatus.FOUND);
     }
-        //access : localhost:8080/update_student?id=1&age=100
+
+
+    @PutMapping("/update_student")
+    //access : localhost:8080/update_student?id=1&age=100
+
+    public ResponseEntity updateStudent(@RequestParam("id") int id,@RequestParam("age") int age){
+        String response= studentService.updateStudent(id,age);
+        if(response==null){
+            return new ResponseEntity<>("Invalid Request",HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(response,HttpStatus.FOUND);
+    }
+
 
 }
